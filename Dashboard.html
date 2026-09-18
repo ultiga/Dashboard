@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<!-- Designed by ULTIGA | RP LABS | Multi-Language Standalone Version -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DashBoard - Multi Stopwatch</title>
+
+<div id="lock-screen-container">
+  <div class="lock-card">
+    <h1>Checking Security...</h1>
+    <p>Looking for <b>access_key.js</b>...</p>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function unlockDashboard() {
+    if (window.accessGranted === true) {
+      var lockScreen = document.getElementById('lock-screen-container');
+      if(lockScreen) lockScreen.remove();
+      
+      var style = document.createElement('style');
+      style.innerHTML = 'body > *:not(#lock-screen-container):not(script):not(style) { display: block !important; }'; 
+      document.head.appendChild(style);
+    } else {
+      showDenied("Invalid Key File Content");
+    }
+  }
+
+  function showDenied(reason) {
+    var container = document.getElementById('lock-screen-container');
+    container.innerHTML = `
+      <div class="lock-card">
+        <h1 style="color: #d63031;">ACCESS DENIED</h1>
+        <p>Any attempt to copy this without the owner's approval will be prosecuted</p>
+        <p style="font-size: 0.8em; margin-top: 10px; opacity: 0.6;">(${reason})</p>
+        <button onclick="location.reload()" style="margin-top:20px; padding:10px 20px; cursor:pointer;">Retry</button>
+      </div>
+    `;
+    window.stop();
+  }
+</script>
+
+<script 
+  src="access_key.js" 
+  onload="unlockDashboard()" 
+  onerror="showDenied('This Portal is encrypted')"
+></script>
+
+
+
+
+
+
+
+
+<style>
+/* --- Core Styles --- */
+html {
+  font-family: Verdana, Tahoma, "DejaVu Sans", sans-serif;
+  font-size: 14px;
+  background-color: #000;
+  line-height: 21px;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+}
+body {
+  position: relative;
+  background-color: #000;
+  color: #fff;
+}
+ul {
+  padding: 0 0 0 30px;
+  margin: 0;
+}
+a {
+  color: #000;
+  text-decoration: none;
+}
+strong { font-weight: 700; }
+img {
+  border: 0;
+  max-width: 100%;
+  height: auto;
+}
+h2 {
+  font: 700 16px "Open Sans", Verdana, Geneva, sans-serif;
+  color: #222;
+}
+h2, h3 { margin: 25px 20px 7px 0; }
+h3 { font: 700 14px "Open Sans", Verdana, Geneva, sans-serif; }
+h3, h4 { color: #555; }
+h4 { font-size: 12px; margin: 25px 0 7px; }
+
+input[type=submit], button, input[type=button] {
+  cursor: pointer;
+  -webkit-appearance: button;
+}
+input {
+  text-align: center;
+  font-size: 13px;
+  outline: 0;
+}
+#bar-b {
+  background-color: #000;
+  min-height: 51px;
+  width: auto;
+}
+#bar-b, #ctr-pg { min-width: 300px; }
+#ctr-pg {
+  margin: 0 auto;
+  max-width: 100% !important;
+  position: relative;
+}
+#page { margin: 0 15px; }
+
+.f-sbm {
+  background-color: #444;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+  border-radius: 3px;
+  line-height: normal;
+  margin: 3px 10px;
+  padding: 4px 20px;
+}
+input.f-sbm:hover { background-color: #000; }
+input.f-txt {
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  background-color: #fff;
+  margin: 3px 2px !important;
+  padding: 5px !important;
+  width: 171px !important;
+  color: #000;
+}
+input.f-txt:hover, input.f-txt:focus { border-color: #336; }
+
+.f-chr, .f-del, .f-stp, .f-str, .f-raz, .f-exp {
+  border: 1px outset #000;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #fff;
+  position: relative;
+  border-radius: 0;
+  line-height: normal;
+  min-width: 235px;
+  margin: 1px 0;
+  padding: 5px 20px;
+  height: 46px;
+  font-weight: 700;
+}
+.f-str { background-color: #393; }
+.f-stp, .f-raz { background-color: #c44; }
+.f-del { background-color: #555; }
+.f-exp { background-color: #333; }
+.f-exp:focus, .f-exp:hover { background-color: #000; }
+input.f-str:hover { background-color: #060; }
+input.f-stp:hover { background-color: #911; }
+
+.oups {
+  list-style: none;
+  border-bottom: 1px solid #333;
+  font-size: 14px;
+  margin: 15px 0;
+  padding: 0 2px 7px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.oups li {
+  display: inline-block;
+  margin: 7px 3px 0;
+  color: #aaa;
+}
+.oups li a {
+  display: block;
+  line-height: 21px;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  background: #eee;
+  color: #000;
+  padding: 2px 10px;
+  border: 1px solid #ccc;
+}
+.oups li a.active {
+  background: #fb3 !important;
+  border-color: #e09b1f;
+  font-weight: bold;
+}
+.oups li a:hover {
+  border-color: #000;
+  box-shadow: 0 0 10px #999;
+}
+
+/* Inline Language Dropdown (Placed immediately after Show time differences) */
+.oups li.lang-inline-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  border-left: 1px solid #444;
+  padding-left: 10px;
+}
+.lang-select-box {
+  background: #1e242d;
+  color: #f1f5f9;
+  border: 1px solid #3b82f6;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  height: 26px;
+  line-height: 26px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: auto !important;
+  text-align: left !important;
+}
+.lang-select-box:hover, .lang-select-box:focus {
+  background: #252d3a;
+  border-color: #60a5fa;
+}
+
+.chr-tot {
+  font-size: 24px;
+  height: 50px;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start !important;
+  padding-top: 2px !important;
+  text-align: center;
+  position: relative;
+  border-radius: 3px 3px 0 0;
+  margin: 0 0 10px;
+  width: 183px;
+  background-color: #fff;
+  border: 1px solid #333;
+  opacity: .5;
+  cursor: pointer;
+  user-select: none;
+}
+.chr-tot > div:last-child {
+  margin: 0 auto !important;
+  text-align: center !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(4px);
+}
+.chr-tot div div {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #999;
+  margin: 0;
+  padding-top: 0 !important;
+}
+.chr-tot div div.grd { width: 16px; }
+.chr-tot div div.pti { width: 12px; font-size: 16px; color: #555; }
+
+.chr-mlt {
+  margin: 2px;
+  padding-bottom: 2px;
+  height: 70px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+}
+.chr-mlt h3 {
+  background: #000;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  color: #fff;
+  top: 35px;
+  opacity: .9;
+  font: normal 12px Verdana, Geneva, sans-serif;
+  margin: 0;
+  height: 16px;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  display: inline-block;
+  padding: 0 4px;
+  max-width: 170px;
+  z-index: 2;
+}
+.chr-mlt .chr-ecart {
+  font: normal 12px Verdana, Geneva, sans-serif;
+  margin: 0;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 0;
+  border-top-left-radius: 4px;
+  height: 16px;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-block;
+  padding: 0 4px;
+  max-width: 170px;
+  background: #ccc;
+  color: #000;
+  border-top: 1px solid #444;
+  border-left: 1px solid #444;
+  z-index: 2;
+}
+
+.chr-tot-0 .chr-tot { opacity: 1; }
+.chr-tot-1 .chr-tot { background-color: #cfc !important; opacity: 1; }
+.chr-tot-0 h3 { background-color: #300 !important; }
+.chr-tot-1 h3 { background-color: #030 !important; }
+
+.cdr {
+  margin: 0;
+  position: absolute;
+  top: 49px;
+  left: 0;
+  z-index: 3;
+}
+
+/* Individual Timer Buttons - Compact Font Size */
+.chr-mlt .bt-reprise, .chr-mlt .bt-reset, .chr-mlt .bt-start, .chr-mlt .bt-stop {
+  border: 1px outset #000;
+  border-top: 0;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #fff;
+  position: relative;
+  border-radius: 0;
+  line-height: normal;
+  min-width: auto !important;
+  padding: 2px;
+  height: 28px;
+}
+.chr-mlt .bt-reset {
+  border-left: 0;
+  width: 89px !important;
+  border-bottom-right-radius: 4px;
+  background-color: #c44;
+  font-size: 11px !important;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.chr-mlt .bt-reprise {
+  width: 90px !important;
+  border-bottom-left-radius: 4px;
+  border-right-color: #999;
+  background-color: #393;
+  font-size: 11px !important;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.chr-mlt .bt-start, .chr-mlt .bt-stop {
+  width: 185px !important;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.chr-mlt .bt-start { background-color: #393; }
+.chr-mlt .bt-stop { background-color: #c44; }
+
+.chr-nbr { margin: 10px; vertical-align: middle; display: inline-block; }
+.cdr-all { display: inline-block; }
+#nombre { font-size: 16px; padding: 4px 6px; width: 60px; }
+
+.cdr-all .bt-start, .cdr-all .bt-stop, .cdr-all .bt-reprise, .cdr-all .bt-reset, .cdr-all .bt-export {
+  border: 1px outset #000;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #fff;
+  padding: 6px 16px;
+  height: auto !important;
+  min-width: auto !important;
+  font-weight: 700;
+  font-size: 14px;
+  margin: 0;
+}
+.cdr-all .bt-start { border-top-left-radius: 4px; border-bottom-left-radius: 4px; background-color: #393; }
+.cdr-all .bt-stop { background-color: #c44; }
+.cdr-all .bt-reprise { background-color: #393; }
+.cdr-all .bt-reset { background-color: #c44; }
+.cdr-all .bt-export { border-top-right-radius: 4px; border-bottom-right-radius: 4px; background-color: #333; }
+
+input.bt-hide {
+  opacity: .4 !important;
+  background-color: #555 !important;
+  pointer-events: none;
+}
+.desactive { opacity: .5; pointer-events: none; }
+
+.lst-mem {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 15px 0;
+}
+#ta-export {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 15px;
+  background: #111;
+  color: #0f0;
+  font-family: monospace;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Options Section */
+#timer-start-options-card {
+  background: #16191d;
+  border: 1px solid #333a44;
+  border-radius: 8px;
+  padding: 22px 24px;
+  margin: 25px auto 40px auto;
+  color: #e2e8f0;
+  font-family: Verdana, Tahoma, Geneva, sans-serif;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.7);
+  max-width: 950px;
+  box-sizing: border-box;
+}
+.tso-header {
+  border-bottom: 1px solid #2d343f;
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.tso-title { font-size: 16px; font-weight: 700; color: #f1f5f9; margin: 0; }
+.tso-badge { font-size: 12px; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+.tso-badge-sys { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; }
+.tso-badge-cust { background: #4a2c00; color: #fbbf24; border: 1px solid #d97706; }
+.tso-mode-selector { display: flex; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.tso-radio-card {
+  flex: 1 1 280px;
+  background: #1f242c;
+  border: 2px solid #333d4b;
+  border-radius: 6px;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.tso-radio-card.active { border-color: #3b82f6; background: #1a2536; }
+.tso-card-title { font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 4px; }
+.tso-card-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+.tso-custom-controls {
+  background: #1b2028;
+  border: 1px solid #2d3542;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.tso-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.tso-input-dt {
+  background: #0f1318;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  color: #fff;
+  padding: 7px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.tso-btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.tso-btn-sm {
+  background: #2a313d;
+  border: 1px solid #4b5563;
+  color: #f1f5f9;
+  border-radius: 4px;
+  padding: 5px 9px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.tso-btn-sm:hover { background: #374151; border-color: #9ca3af; }
+.tso-btn-now { background: #065f46; border-color: #059669; color: #a7f3d0; }
+.tso-btn-now:hover { background: #047857; }
+.tso-preview-box {
+  background: #0f1318;
+  border-left: 3px solid #f59e0b;
+  padding: 8px 12px;
+  border-radius: 0 4px 4px 0;
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-top: 8px;
+}
+.tso-direct-start {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1a202c;
+  border: 1px solid #2d3748;
+  border-radius: 6px;
+  padding: 12px 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.tso-select-timer {
+  background: #0f1318;
+  color: #fff;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 13px;
+  height: 34px;
+}
+.tso-start-btn {
+  background-color: #16a34a !important;
+  border: 1px outset #15803d !important;
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 6px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.tso-start-btn:hover { background-color: #15803d !important; }
+#tso-toast {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #1e293b;
+  color: #fff;
+  border: 1px solid #38bdf8;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  z-index: 99999;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+<div id="bar-b">
+  <div id="ctr-pg">
+    <div id="page">
+      <div class="all-chrono"></div>
+
+      <section>
+        <ul class="oups">
+          <li data-i18n="opt_title">Options</li>
+          <li><a id="aff-dix" href="#" class="active" data-i18n="opt_tenths">Scroll the tenths</a></li>
+          <li><a id="un-par-un" href="#" data-i18n="opt_one_by_one">One at a time</a></li>
+          <li><a id="masquer" href="#" class="active" data-i18n="opt_hide_btns">Hide buttons</a></li>
+          <li><a id="ecart" href="#" data-i18n="opt_gap">Show time differences</a></li>
+          <!-- Inline Language Dropdown directly on the same line -->
+          <li class="lang-inline-item">
+            <span style="font-size: 13px;">🌐</span>
+            <select id="lang-select" class="lang-select-box">
+              <option value="en">English</option>
+              <option value="ms">Bahasa Melayu</option>
+              <option value="zh">简体中文</option>
+              <option value="zh-TW">繁體中文</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+              <option value="th">ไทย</option>
+              <option value="lo">ພາສາລາວ</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="nl">Nederlands</option>
+            </select>
+          </li>
+        </ul>
+      </section>
+
+      <div>
+        <div class="chr-nbr"><input type="number" id="nombre" name="nbr-result" min="2" max="1000" value="20"></div>
+        <div class="cdr-all"><input type="button" value="Start all" class="bt-start" id="bt-start-all" data-i18n-val="btn_start_all"></div>
+        <div class="cdr-all"><input type="button" value="Stop all" class="bt-stop bt-hide" id="bt-stop-all" data-i18n-val="btn_stop_all"></div>
+        <div class="cdr-all"><input type="button" value="Relaunch" class="bt-reprise" id="bt-reprise-all" data-i18n-val="btn_relaunch_all"></div>
+        <div class="cdr-all"><input type="button" value="Clear all" class="bt-reset" id="bt-reset-all" data-i18n-val="btn_clear_all"></div>
+        <div class="cdr-all"><input type="button" value="Export" class="bt-export" id="bt-export" data-i18n-val="btn_export"></div>
+      </div>
+
+      <div id="cdr-exp">
+        <h4 data-i18n="labels_title">Timer Labels</h4>
+        <div class="lst-mem"></div>
+        <input type="button" value="Clear Names" class="f-sbm" id="bt-clr-nom" data-i18n-val="btn_clear_names">
+        <div class="export-memoire"></div>
+      </div>
+
+      <!-- Individual Timer Start Mode Options -->
+      <div id="timer-start-options-card">
+        <div class="tso-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:18px;">⏱</span>
+            <h3 class="tso-title" data-i18n="tso_title">Individual Timer Start Options</h3>
+          </div>
+          <span id="tso-active-badge" class="tso-badge tso-badge-sys">Active: System Clock</span>
+        </div>
+
+        <div class="tso-mode-selector">
+          <label class="tso-radio-card active" id="card-mode-system">
+            <input type="radio" name="start_mode_radio" value="system" checked>
+            <div>
+              <div class="tso-card-title" data-i18n="tso_sys_title">System Clock (Real-Time)</div>
+              <div class="tso-card-desc" data-i18n="tso_sys_desc">Timers start at the current live device clock. Starting elapsed time begins at 00:00:00.</div>
+            </div>
+          </label>
+
+          <label class="tso-radio-card" id="card-mode-custom">
+            <input type="radio" name="start_mode_radio" value="custom">
+            <div>
+              <div class="tso-card-title" data-i18n="tso_cust_title">Custom Adjustable Timestamp</div>
+              <div class="tso-card-desc" data-i18n="tso_cust_desc">Start any individual timer with a custom date/time or past timestamp. The timer immediately calculates the elapsed time from that point.</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="tso-custom-controls" id="tso-custom-panel" style="display: none;">
+          <div class="tso-row">
+            <label style="font-size: 13px; font-weight: 600; color: #cbd5e1;" for="tso-datetime-input" data-i18n="tso_lbl_custom_ts">Custom Start Timestamp:</label>
+            <input type="datetime-local" step="1" id="tso-datetime-input" class="tso-input-dt">
+            <button type="button" class="tso-btn-sm tso-btn-now" id="tso-btn-now" data-i18n="tso_btn_now">⟳ Set to Now</button>
+          </div>
+
+          <div class="tso-row" style="margin-bottom: 6px;">
+            <span style="font-size: 11px; color: #94a3b8; font-weight: 600;" data-i18n="tso_quick_adj">Quick Adjust:</span>
+            <div class="tso-btn-group">
+              <button type="button" class="tso-btn-sm" data-offset="-60">−1m</button>
+              <button type="button" class="tso-btn-sm" data-offset="-300">−5m</button>
+              <button type="button" class="tso-btn-sm" data-offset="-900">−15m</button>
+              <button type="button" class="tso-btn-sm" data-offset="-1800">−30m</button>
+              <button type="button" class="tso-btn-sm" data-offset="-3600">−1h</button>
+              <button type="button" class="tso-btn-sm" data-offset="-7200">−2h</button>
+              <button type="button" class="tso-btn-sm" data-offset="60">+1m</button>
+              <button type="button" class="tso-btn-sm" data-offset="300">+5m</button>
+              <button type="button" class="tso-btn-sm" data-offset="900">+15m</button>
+              <button type="button" class="tso-btn-sm" data-offset="3600">+1h</button>
+            </div>
+          </div>
+
+          <div class="tso-preview-box" id="tso-preview-text">
+            Selected Start: --:--:--
+          </div>
+        </div>
+
+        <div class="tso-direct-start">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span style="font-size:12px; color:#cbd5e1; font-weight:600;" data-i18n="tso_launch_lbl">Launch Individual Timer:</span>
+            <select id="tso-timer-dropdown" class="tso-select-timer"></select>
+            <button type="button" id="tso-btn-start-selected" class="tso-start-btn" data-i18n="tso_btn_start_selected">▶ Start Selected Timer</button>
+          </div>
+          <div style="font-size:11px; color:#94a3b8;" data-i18n="tso_hint">
+            💡 Click any individual timer box or Start button to launch it directly.
+          </div>
+        </div>
+      </div>
+
+      <div id="tso-toast"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // --- Translations Dictionary (11 Languages) ---
+  var i18n = {
+    en: {
+      doc_title: "DashBoard - Multi Stopwatch",
+      opt_title: "Options",
+      opt_tenths: "Scroll the tenths",
+      opt_one_by_one: "One at a time",
+      opt_hide_btns: "Hide buttons",
+      opt_gap: "Show time differences",
+      btn_start_all: "Start all",
+      btn_stop_all: "Stop all",
+      btn_relaunch_all: "Relaunch",
+      btn_clear_all: "Clear all",
+      btn_export: "Export",
+      labels_title: "Timer Labels",
+      btn_clear_names: "Clear Names",
+      btn_start_ind: "Start",
+      btn_stop_ind: "Stop",
+      btn_resume_ind: "Resume",
+      btn_reset_ind: "Reset",
+      placeholder_name: "Name",
+      timer_prefix: "Timer",
+      tso_title: "Individual Timer Start Options",
+      tso_badge_sys: "Active: System Clock",
+      tso_badge_cust: "Active: Custom Timestamp",
+      tso_sys_title: "System Clock (Real-Time)",
+      tso_sys_desc: "Timers start at the current live device clock. Starting elapsed time begins at 00:00:00.",
+      tso_cust_title: "Custom Adjustable Timestamp",
+      tso_cust_desc: "Start any individual timer with a custom date/time or past timestamp. The timer immediately calculates the elapsed time from that point.",
+      tso_lbl_custom_ts: "Custom Start Timestamp:",
+      tso_btn_now: "⟳ Set to Now",
+      tso_quick_adj: "Quick Adjust:",
+      tso_launch_lbl: "Launch Individual Timer:",
+      tso_btn_start_selected: "▶ Start Selected Timer",
+      tso_hint: "💡 Click any individual timer box or Start button to launch it directly.",
+      tso_preview_sel: "Selected Start",
+      tso_preview_elapsed: "Starting Elapsed",
+      tso_preview_future: "(Future Timestamp selected)",
+      toast_cust_start: "started with Custom Timestamp",
+      toast_sys_start: "started with System Clock"
+    },
+    ms: {
+      doc_title: "Papan Pemuka - Jam Randik Berganda",
+      opt_title: "Pilihan",
+      opt_tenths: "Tatal persepuluh saat",
+      opt_one_by_one: "Satu demi satu",
+      opt_hide_btns: "Sembunyikan butang",
+      opt_gap: "Tunjukkan perbezaan masa",
+      btn_start_all: "Mula semua",
+      btn_stop_all: "Henti semua",
+      btn_relaunch_all: "Sambung semula",
+      btn_clear_all: "Padam semua",
+      btn_export: "Eksport",
+      labels_title: "Label Jam Randik",
+      btn_clear_names: "Kosongkan Nama",
+      btn_start_ind: "Mula",
+      btn_stop_ind: "Henti",
+      btn_resume_ind: "Sambung",
+      btn_reset_ind: "Tetap",
+      placeholder_name: "Nama",
+      timer_prefix: "Jam",
+      tso_title: "Pilihan Memulakan Jam Randik Individu",
+      tso_badge_sys: "Aktif: Jam Sistem",
+      tso_badge_cust: "Aktif: Cap Masa Tersuai",
+      tso_sys_title: "Jam Sistem (Masa Nyata)",
+      tso_sys_desc: "Jam bermula pada waktu peranti langsung. Kiraan masa berlalu bermula pada 00:00:00.",
+      tso_cust_title: "Cap Masa Boleh Laras Tersuai",
+      tso_cust_desc: "Mulakan sebarang jam individu dengan tarikh/masa tertentu atau masa lampau. Jam segera mengira masa berlalu dari titik tersebut.",
+      tso_lbl_custom_ts: "Cap Masa Mula Tersuai:",
+      tso_btn_now: "⟳ Tetapkan Sekarang",
+      tso_quick_adj: "Pelarasan Pantas:",
+      tso_launch_lbl: "Lancarkan Jam Individu:",
+      tso_btn_start_selected: "▶ Mula Jam Dipilih",
+      tso_hint: "💡 Klik kotak paparan jam atau butang Mula pada bila-bila masa untuk melancarkannya.",
+      tso_preview_sel: "Mula Dipilih",
+      tso_preview_elapsed: "Masa Berlalu Permulaan",
+      tso_preview_future: "(Cap masa masa hadapan dipilih)",
+      toast_cust_start: "dimulakan dengan Cap Masa Tersuai",
+      toast_sys_start: "dimulakan dengan Jam Sistem"
+    },
+    zh: {
+      doc_title: "仪表盘 - 多路秒表计时器",
+      opt_title: "设置选项",
+      opt_tenths: "滚动十分之一秒",
+      opt_one_by_one: "逐个运行",
+      opt_hide_btns: "隐藏按钮",
+      opt_gap: "显示时间差距",
+      btn_start_all: "全部开始",
+      btn_stop_all: "全部停止",
+      btn_relaunch_all: "继续运行",
+      btn_clear_all: "全部清空",
+      btn_export: "导出数据",
+      labels_title: "计时器标签",
+      btn_clear_names: "清空名称",
+      btn_start_ind: "开始",
+      btn_stop_ind: "停止",
+      btn_resume_ind: "继续",
+      btn_reset_ind: "重置",
+      placeholder_name: "名称",
+      timer_prefix: "计时器",
+      tso_title: "单路计时器启动设置",
+      tso_badge_sys: "当前模式: 系统时钟",
+      tso_badge_cust: "当前模式: 自定义时间戳",
+      tso_sys_title: "系统时钟 (实时)",
+      tso_sys_desc: "秒表从设备实时时钟启动，初始流逝时间从 00:00:00 开始。",
+      tso_cust_title: "自定义可调起始时间",
+      tso_cust_desc: "可使用自定义日期/时间或过去的某个时间戳启动指定秒表，秒表将自动从该时间点累计流逝时间。",
+      tso_lbl_custom_ts: "自定义起始时间戳:",
+      tso_btn_now: "⟳ 设为当前时间",
+      tso_quick_adj: "快速调整:",
+      tso_launch_lbl: "启动指定计时器:",
+      tso_btn_start_selected: "▶ 启动选中计时器",
+      tso_hint: "💡 您也可随时直接点击上方秒表框或开始按钮进行启动。",
+      tso_preview_sel: "设定起始时间",
+      tso_preview_elapsed: "已流逝时间",
+      tso_preview_future: "(选择了未来时间戳)",
+      toast_cust_start: "已通过自定义时间戳启动",
+      toast_sys_start: "已通过系统时钟启动"
+    },
+    "zh-TW": {
+      doc_title: "儀表板 - 多路秒錶計時器",
+      opt_title: "設定選項",
+      opt_tenths: "顯示十分之一秒",
+      opt_one_by_one: "單次運行一個",
+      opt_hide_btns: "隱藏按鈕",
+      opt_gap: "顯示時間差距",
+      btn_start_all: "全部開始",
+      btn_stop_all: "全部停止",
+      btn_relaunch_all: "繼續計時",
+      btn_clear_all: "全部清除",
+      btn_export: "匯出資料",
+      labels_title: "計時器標籤",
+      btn_clear_names: "清空名稱",
+      btn_start_ind: "開始",
+      btn_stop_ind: "停止",
+      btn_resume_ind: "繼續",
+      btn_reset_ind: "重設",
+      placeholder_name: "名稱",
+      timer_prefix: "計時器",
+      tso_title: "單路計時器啟動選項",
+      tso_badge_sys: "目前模式: 系統時鐘",
+      tso_badge_cust: "目前模式: 自訂時間戳記",
+      tso_sys_title: "系統時鐘 (即時)",
+      tso_sys_desc: "秒錶以裝置即時時鐘啟動，計時從 00:00:00 開始累計。",
+      tso_cust_title: "自訂可調起始時間",
+      tso_cust_desc: "可選擇特定或過去的時間戳記啟動秒錶，秒錶會即刻計算該時間點累積的時間差距。",
+      tso_lbl_custom_ts: "自訂起始時間戳記:",
+      tso_btn_now: "⟳ 設為現在時間",
+      tso_quick_adj: "快速微調:",
+      tso_launch_lbl: "啟動特定計時器:",
+      tso_btn_start_selected: "▶ 啟動所選計時器",
+      tso_hint: "💡 您也可以隨時點選上方個別秒錶方塊或開始按鈕直接啟動。",
+      tso_preview_sel: "設定起始時間",
+      tso_preview_elapsed: "起始累積時間",
+      tso_preview_future: "(選擇了未來的時間戳記)",
+      toast_cust_start: "已使用自訂時間戳記啟動",
+      toast_sys_start: "已使用系統時鐘啟動"
+    },
+    ja: {
+      doc_title: "ダッシュボード - マルチストップウォッチ",
+      opt_title: "設定オプション",
+      opt_tenths: "0.1秒単位スクロール",
+      opt_one_by_one: "1つずつ実行",
+      opt_hide_btns: "ボタン非表示",
+      opt_gap: "時間差を表示",
+      btn_start_all: "すべて開始",
+      btn_stop_all: "すべて停止",
+      btn_relaunch_all: "再開",
+      btn_clear_all: "すべてクリア",
+      btn_export: "エクスポート",
+      labels_title: "タイマーラベル",
+      btn_clear_names: "名前をクリア",
+      btn_start_ind: "開始",
+      btn_stop_ind: "停止",
+      btn_resume_ind: "再開",
+      btn_reset_ind: "リセット",
+      placeholder_name: "名前",
+      timer_prefix: "タイマー",
+      tso_title: "個別タイマー開始オプション",
+      tso_badge_sys: "有効: システム時計",
+      tso_badge_cust: "有効: カスタム時刻",
+      tso_sys_title: "システム時計 (リアルタイム)",
+      tso_sys_desc: "端末の現在時刻から開始します。経過時間は 00:00:00 から始まります。",
+      tso_cust_title: "カスタム調整可能タイムスタンプ",
+      tso_cust_desc: "過去の日時やカスタムタイムスタンプから開始し、その時点からの経過時間を即座に計算します。",
+      tso_lbl_custom_ts: "開始タイムスタンプ:",
+      tso_btn_now: "⟳ 現在時刻に設定",
+      tso_quick_adj: "クイック調整:",
+      tso_launch_lbl: "個別タイマー起動:",
+      tso_btn_start_selected: "▶ 選択タイマー開始",
+      tso_hint: "💡 いつでもタイマー表示枠や開始ボタンを直接押して開始できます。",
+      tso_preview_sel: "選択した開始時刻",
+      tso_preview_elapsed: "初期経過時間",
+      tso_preview_future: "(未来の時刻が選択されています)",
+      toast_cust_start: "カスタム時刻で開始しました",
+      toast_sys_start: "システム時計で開始しました"
+    },
+    ko: {
+      doc_title: "대시보드 - 다중 스톱워치",
+      opt_title: "옵션",
+      opt_tenths: "0.1초 단위 표시",
+      opt_one_by_one: "하나씩 실행",
+      opt_hide_btns: "버튼 숨기기",
+      opt_gap: "시간 차이 표시",
+      btn_start_all: "모두 시작",
+      btn_stop_all: "모두 정지",
+      btn_relaunch_all: "재시작",
+      btn_clear_all: "모두 초기화",
+      btn_export: "내보내기",
+      labels_title: "타이머 이름",
+      btn_clear_names: "이름 지우기",
+      btn_start_ind: "시작",
+      btn_stop_ind: "정지",
+      btn_resume_ind: "계속",
+      btn_reset_ind: "초기화",
+      placeholder_name: "이름",
+      timer_prefix: "타이머",
+      tso_title: "개별 타이머 시작 옵션",
+      tso_badge_sys: "활성: 시스템 시계",
+      tso_badge_cust: "활성: 사용자 지정 타임스탬프",
+      tso_sys_title: "시스템 시계 (실시간)",
+      tso_sys_desc: "기기의 실시간 시계로 시작하며, 경과 시간은 00:00:00부터 시작됩니다.",
+      tso_cust_title: "사용자 지정 조절 타임스탬프",
+      tso_cust_desc: "특정 과거나 원하는 시간으로 타이머를 시작하여 경과 시간을 즉시 계산합니다.",
+      tso_lbl_custom_ts: "사용자 지정 시작 타임스탬프:",
+      tso_btn_now: "⟳ 현재 시간으로 설정",
+      tso_quick_adj: "빠른 조정:",
+      tso_launch_lbl: "선택 타이머 실행:",
+      tso_btn_start_selected: "▶ 선택 타이머 시작",
+      tso_hint: "💡 상단 타이머 박스나 시작 버튼을 직접 눌러 시작할 수도 있습니다.",
+      tso_preview_sel: "선택된 시작 시간",
+      tso_preview_elapsed: "시작 시 경과 시간",
+      tso_preview_future: "(미래 시간이 선택되었습니다)",
+      toast_cust_start: "사용자 지정 시간으로 시작됨",
+      toast_sys_start: "시스템 시계로 시작됨"
+    },
+    th: {
+      doc_title: "แดชบอร์ด - นาฬิกาจับเวลาหลายช่อง",
+      opt_title: "ตัวเลือก",
+      opt_tenths: "แสดงเศษหนึ่งส่วนสิบวินาที",
+      opt_one_by_one: "ทำงานทีละตัว",
+      opt_hide_btns: "ซ่อนปุ่ม",
+      opt_gap: "แสดงผลต่างเวลา",
+      btn_start_all: "เริ่มทั้งหมด",
+      btn_stop_all: "หยุดทั้งหมด",
+      btn_relaunch_all: "เริ่มต่อทั้งหมด",
+      btn_clear_all: "ล้างทั้งหมด",
+      btn_export: "ส่งออกข้อมูล",
+      labels_title: "ป้ายชื่อตัวจับเวลา",
+      btn_clear_names: "ล้างชื่อ",
+      btn_start_ind: "เริ่ม",
+      btn_stop_ind: "หยุด",
+      btn_resume_ind: "ต่อ",
+      btn_reset_ind: "รีเซ็ต",
+      placeholder_name: "ชื่อ",
+      timer_prefix: "ตัวจับเวลา",
+      tso_title: "ตัวเลือกการเริ่มของแต่ละตัวจับเวลา",
+      tso_badge_sys: "โหมด: นาฬิกาของระบบ",
+      tso_badge_cust: "โหมด: เวลาที่กำหนดเอง",
+      tso_sys_title: "นาฬิกาของระบบ (เวลาจริง)",
+      tso_sys_desc: "เริ่มจับเวลาตามเวลาจริงของอุปกรณ์ โดยเริ่มนับเวลาจาก 00:00:00",
+      tso_cust_title: "กำหนดเวลาเริ่มต้นเอง",
+      tso_cust_desc: "เริ่มตัวจับเวลาด้วยเวลาที่ต้องการหรือเวลาในอดีต ระบบจะคำนวณเวลาที่ผ่านไปทันที",
+      tso_lbl_custom_ts: "เวลาเริ่มต้นที่กำหนดเอง:",
+      tso_btn_now: "⟳ ตั้งเป็นเวลาปัจจุบัน",
+      tso_quick_adj: "ปรับเวลาอย่างรวดเร็ว:",
+      tso_launch_lbl: "เปิดใช้งานตัวจับเวลา:",
+      tso_btn_start_selected: "▶ เริ่มตัวจับเวลาที่เลือก",
+      tso_hint: "💡 คุณสามารถคลิกที่กล่องตัวจับเวลาหรือปุ่มเริ่มด้านบนเพื่อเริ่มได้ทันที",
+      tso_preview_sel: "เวลาเริ่มต้นที่เลือก",
+      tso_preview_elapsed: "เวลาที่ผ่านไปเริ่มต้น",
+      tso_preview_future: "(เลือกเวลาในอนาคต)",
+      toast_cust_start: "เริ่มด้วยเวลาที่กำหนดเอง",
+      toast_sys_start: "เริ่มด้วยนาฬิการะบบ"
+    },
+    lo: {
+      doc_title: "ແດຊບອດ - ໂມງຈັບເວລາຫຼາຍຊ່ອງ",
+      opt_title: "ຕົວເລືອກ",
+      opt_tenths: "ສະແດງເສດໜຶ່ງສ່ວນສິບວິນາທີ",
+      opt_one_by_one: "ເຮັດວຽກເທື່ອລະອັນ",
+      opt_hide_btns: "ເຊື່ອງປຸ່ມ",
+      opt_gap: "ສະແດງຄວາມແຕກຕ່າງເວລາ",
+      btn_start_all: "ເລີ່ມທັງໝົດ",
+      btn_stop_all: "ຢຸດທັງໝົດ",
+      btn_relaunch_all: "ສືບຕໍ່ທັງໝົດ",
+      btn_clear_all: "ລຶບທັງໝົດ",
+      btn_export: "ສົ່ງອອກຂໍ້ມູນ",
+      labels_title: "ຊື່ໂມງຈັບເວລາ",
+      btn_clear_names: "ລຶບຊື່",
+      btn_start_ind: "ເລີ່ມ",
+      btn_stop_ind: "ຢຸດ",
+      btn_resume_ind: "ຕໍ່",
+      btn_reset_ind: "ຕັ້ງໃໝ່",
+      placeholder_name: "ຊື່",
+      timer_prefix: "ໂມງ",
+      tso_title: "ຕົວເລືອກເລີ່ມໂມງຈັບເວລາແຕ່ລະອັນ",
+      tso_badge_sys: "ໂໝດ: ໂມງລະບົບ",
+      tso_badge_cust: "ໂໝດ: ເວລາກຳນົດເອງ",
+      tso_sys_title: "ໂມງລະບົບ (ເວລາຈິງ)",
+      tso_sys_desc: "ເລີ່ມຕາມເວລາຈິງຂອງອຸປະກອນ ເລີ່ມນັບເວລາຜ່ານໄປຈາກ 00:00:00.",
+      tso_cust_title: "ກຳນົດເວລາເລີ່ມຕົ້ນເອງ",
+      tso_cust_desc: "ເລີ່ມໂມງຈັບເວລາໂດຍກຳນົດເວລາໃນອະດີດ ຫຼື ເວລາທີ່ເລືອກ ລະບົບຈະຄິດໄລ່ເວລາທັນທີ.",
+      tso_lbl_custom_ts: "ເວລາເລີ່ມຕົ້ນກຳນົດເອງ:",
+      tso_btn_now: "⟳ ຕັ້ງເປັນປັດຈຸບັນ",
+      tso_quick_adj: "ປັບເວລາດ່ວນ:",
+      tso_launch_lbl: "ເລີ່ມໂມງຈັບເວລາທີ່ເລືອກ:",
+      tso_btn_start_selected: "▶ ເລີ່ມໂມງທີ່ເລືອກ",
+      tso_hint: "💡 ທ່ານສາມາດກົດໃສ່ກ່ອງໂມງ ຫຼື ປຸ່ມເລີ່ມຂ້າງເທິງໄດ້ໂດຍກົງ.",
+      tso_preview_sel: "ເວລາເລີ່ມທີ່ເລືອກ",
+      tso_preview_elapsed: "ເວລາຜ່ານໄປເລີ່ມຕົ້ນ",
+      tso_preview_future: "(ເລືອກເວລາໃນອະນາຄົດ)",
+      toast_cust_start: "ເລີ່ມດ້ວຍເວລາກຳນົດເອງ",
+      toast_sys_start: "ເລີ່ມດ້ວຍໂມງລະບົບ"
+    },
+    fr: {
+      doc_title: "Tableau de Bord - Chronomètres Multiples",
+      opt_title: "Options",
+      opt_tenths: "Défilement des dixièmes",
+      opt_one_by_one: "Un par un",
+      opt_hide_btns: "Masquer les boutons",
+      opt_gap: "Afficher les écarts",
+      btn_start_all: "Tout démarrer",
+      btn_stop_all: "Tout arrêter",
+      btn_relaunch_all: "Reprise",
+      btn_clear_all: "Tout effacer",
+      btn_export: "Exporter",
+      labels_title: "Noms des chronomètres",
+      btn_clear_names: "Effacer les noms",
+      btn_start_ind: "Start",
+      btn_stop_ind: "Stop",
+      btn_resume_ind: "Reprise",
+      btn_reset_ind: "Reset",
+      placeholder_name: "Nom",
+      timer_prefix: "Chrono",
+      tso_title: "Options de démarrage individuel",
+      tso_badge_sys: "Actif : Horloge Système",
+      tso_badge_cust: "Actif : Horodatage Personnalisé",
+      tso_sys_title: "Horloge Système (Temps Réel)",
+      tso_sys_desc: "Les chronomètres démarrent à l'heure réelle de l'appareil. Le décompte commence à 00:00:00.",
+      tso_cust_title: "Horodatage Personnalisé Ajustable",
+      tso_cust_desc: "Démarrez un chronomètre avec une date/heure passée. Le temps écoulé est immédiatement calculé.",
+      tso_lbl_custom_ts: "Horodatage de démarrage :",
+      tso_btn_now: "⟳ Régler sur Maintenant",
+      tso_quick_adj: "Ajustement rapide :",
+      tso_launch_lbl: "Lancer un chronomètre :",
+      tso_btn_start_selected: "▶ Démarrer la sélection",
+      tso_hint: "💡 Vous pouvez aussi cliquer directement sur n'importe quel chronomètre ou bouton Start.",
+      tso_preview_sel: "Départ sélectionné",
+      tso_preview_elapsed: "Temps déjà écoulé",
+      tso_preview_future: "(Horodatage futur sélectionné)",
+      toast_cust_start: "démarré avec horodatage personnalisé",
+      toast_sys_start: "démarré avec l'horloge système"
+    },
+    de: {
+      doc_title: "Dashboard - Mehrfach-Stoppuhr",
+      opt_title: "Optionen",
+      opt_tenths: "Zehntelsekunden scrollen",
+      opt_one_by_one: "Nacheinander",
+      opt_hide_btns: "Tasten ausblenden",
+      opt_gap: "Zeitabstände anzeigen",
+      btn_start_all: "Alle starten",
+      btn_stop_all: "Alle stoppen",
+      btn_relaunch_all: "Fortsetzen",
+      btn_clear_all: "Alle löschen",
+      btn_export: "Exportieren",
+      labels_title: "Stoppuhr-Bezeichnungen",
+      btn_clear_names: "Namen löschen",
+      btn_start_ind: "Start",
+      btn_stop_ind: "Stopp",
+      btn_resume_ind: "Weiter",
+      btn_reset_ind: "Reset",
+      placeholder_name: "Name",
+      timer_prefix: "Timer",
+      tso_title: "Optionen für Einzel-Start",
+      tso_badge_sys: "Aktiv: Systemzeit",
+      tso_badge_cust: "Aktiv: Benutzerdefinierte Zeit",
+      tso_sys_title: "Systemzeit (Echtzeit)",
+      tso_sys_desc: "Stoppuhren starten mit der Echtzeituhr des Geräts. Die verstrichene Zeit beginnt bei 00:00:00.",
+      tso_cust_title: "Benutzerdefinierter Zeitstempel",
+      tso_cust_desc: "Starten Sie jeden Timer mit einem Datum/Uhrzeit in der Vergangenheit. Die verstrichene Zeit wird sofort berechnet.",
+      tso_lbl_custom_ts: "Benutzerdefinierte Startzeit:",
+      tso_btn_now: "⟳ Auf Jetzt setzen",
+      tso_quick_adj: "Schnelle Anpassung:",
+      tso_launch_lbl: "Einzelnen Timer starten:",
+      tso_btn_start_selected: "▶ Gewählten Timer starten",
+      tso_hint: "💡 Sie können jeden Timer auch durch direktes Anklicken starten.",
+      tso_preview_sel: "Gewählter Start",
+      tso_preview_elapsed: "Verstrichene Startzeit",
+      tso_preview_future: "(Zukünftiger Zeitstempel ausgewählt)",
+      toast_cust_start: "mit benutzerdefinierter Zeit gestartet",
+      toast_sys_start: "mit Systemzeit gestartet"
+    },
+    nl: {
+      doc_title: "Dashboard - Meervoudige Stopwatch",
+      opt_title: "Opties",
+      opt_tenths: "Tienden van seconden",
+      opt_one_by_one: "Eén voor één",
+      opt_hide_btns: "Knoppen verbergen",
+      opt_gap: "Tijdsverschillen tonen",
+      btn_start_all: "Alles starten",
+      btn_stop_all: "Alles stoppen",
+      btn_relaunch_all: "Hervatten",
+      btn_clear_all: "Alles wissen",
+      btn_export: "Exporteren",
+      labels_title: "Stopwatch-labels",
+      btn_clear_names: "Namen wissen",
+      btn_start_ind: "Start",
+      btn_stop_ind: "Stop",
+      btn_resume_ind: "Hervat",
+      btn_reset_ind: "Reset",
+      placeholder_name: "Naam",
+      timer_prefix: "Timer",
+      tso_title: "Opties voor individuele start",
+      tso_badge_sys: "Actief: Systeemklok",
+      tso_badge_cust: "Actief: Aangepaste Tijd",
+      tso_sys_title: "Systeemklok (Real-time)",
+      tso_sys_desc: "Timers starten op de actuele apparaatklok. De verstreken tijd begint op 00:00:00.",
+      tso_cust_title: "Aanpasbare Tijdstempel",
+      tso_cust_desc: "Start een individuele timer met een tijd in het verleden. De verstreken tijd wordt direct berekend.",
+      tso_lbl_custom_ts: "Aangepaste Starttijd:",
+      tso_btn_now: "⟳ Zet op Nu",
+      tso_quick_adj: "Snelle aanpassing:",
+      tso_launch_lbl: "Start individuele timer:",
+      tso_btn_start_selected: "▶ Start geselecteerde timer",
+      tso_hint: "💡 U kunt ook direct op een timervak of startknop klikken.",
+      tso_preview_sel: "Geselecteerde start",
+      tso_preview_elapsed: "Start verstreken tijd",
+      tso_preview_future: "(Toekomstig tijdstip geselecteerd)",
+      toast_cust_start: "gestart met aangepaste tijd",
+      toast_sys_start: "gestart met systeemklok"
+    }
+  };
+
+  var currentLang = localStorage.getItem("app_lang") || "en";
+  if (!i18n[currentLang]) currentLang = "en";
+
+  function t(key) {
+    return (i18n[currentLang] && i18n[currentLang][key]) || i18n["en"][key] || key;
+  }
+
+  function setLanguage(lang) {
+    if (!i18n[lang]) return;
+    currentLang = lang;
+    localStorage.setItem("app_lang", lang);
+    document.documentElement.lang = lang;
+
+    var selectBox = document.getElementById("lang-select");
+    if (selectBox) selectBox.value = lang;
+
+    document.title = t("doc_title");
+
+    // Static text translations
+    document.querySelectorAll("[data-i18n]").forEach(function(el) {
+      var k = el.getAttribute("data-i18n");
+      el.innerText = t(k);
+    });
+
+    // Input values translations
+    document.querySelectorAll("[data-i18n-val]").forEach(function(el) {
+      var k = el.getAttribute("data-i18n-val");
+      el.value = t(k);
+    });
+
+    // Update dynamic labels placeholders and buttons
+    for (var i = 1; i <= state.count; i++) {
+      var inp = document.getElementById("i" + i);
+      if (inp) inp.placeholder = "[" + i + "] : " + t("placeholder_name");
+      updateTimerControlButtons(i);
+    }
+
+    setMode(window.__timerStartMode);
+    populateTimerDropdown();
+    updatePreview();
+  }
+
+  // --- Global State & Timing Logic ---
+  var state = {
+    count: 20,
+    status: [],
+    startTime: [],
+    elapsed: [],
+    lastTick: [],
+    tenthActive: 1,
+    oneByOne: 0,
+    hideButtons: 1,
+    showGap: 0,
+    timerLoop: null
+  };
+
+  window.__timerStartMode = localStorage.getItem('mlt_start_mode') || 'system';
+  window.__customStartTimestamp = null;
+  window.__isStartingTimer = false;
+
+  function decomposeTime(timeVal) {
+    while (timeVal >= 345600000) timeVal -= 345600000;
+    var res = [];
+    res[0] = Math.floor(timeVal / 36000000); timeVal -= 36000000 * res[0];
+    res[1] = Math.floor(timeVal / 3600000);  timeVal -= 3600000 * res[1];
+    res[2] = Math.floor(timeVal / 600000);   timeVal -= 600000 * res[2];
+    res[3] = Math.floor(timeVal / 60000);    timeVal -= 60000 * res[3];
+    res[4] = Math.floor(timeVal / 10000);    timeVal -= 10000 * res[4];
+    res[5] = Math.floor(timeVal / 1000);     timeVal -= 1000 * res[5];
+    res[6] = Math.floor(timeVal / 100);      timeVal -= 100 * res[6];
+    res[7] = Math.floor(timeVal / 10);       timeVal -= 10 * res[7];
+    res[8] = timeVal;
+    return res;
+  }
+
+  function formatTimeText(dec) {
+    return "" + dec[0] + dec[1] + ":" + dec[2] + dec[3] + ":" + dec[4] + dec[5] + "." + dec[6] + dec[7] + dec[8];
+  }
+
+  function initApp() {
+    if (localStorage.getItem("aff-dixieme") !== null) state.tenthActive = parseInt(localStorage.getItem("aff-dixieme"));
+    if (localStorage.getItem("un-par-un") !== null) state.oneByOne = parseInt(localStorage.getItem("un-par-un"));
+    if (localStorage.getItem("c4-masquer") !== null) state.hideButtons = parseInt(localStorage.getItem("c4-masquer"));
+    if (localStorage.getItem("c4-ecart") !== null) state.showGap = parseInt(localStorage.getItem("c4-ecart"));
+    if (localStorage.getItem("mlt-nbr") !== null) {
+      var n = parseInt(localStorage.getItem("mlt-nbr"));
+      if (!isNaN(n) && n >= 2) state.count = Math.min(n, 1000);
+    }
+
+    document.getElementById("nombre").value = state.count;
+    applyOptionClasses();
+    buildTimers();
+    buildLabelInputs();
+    restoreTimerStates();
+    updateMainButtons();
+    startTicking();
+    setLanguage(currentLang);
+  }
+
+  function applyOptionClasses() {
+    toggleActive("aff-dix", state.tenthActive);
+    toggleActive("un-par-un", state.oneByOne);
+    toggleActive("masquer", state.hideButtons);
+    toggleActive("ecart", state.showGap);
+  }
+
+  function toggleActive(id, val) {
+    var el = document.getElementById(id);
+    if (el) {
+      if (val) el.classList.add("active");
+      else el.classList.remove("active");
+    }
+  }
+
+  function buildTimers() {
+    var container = document.querySelector(".all-chrono");
+    var html = "";
+    for (var i = 1; i <= state.count; i++) {
+      html += `
+        <div class="chr-mlt" id="chr-mlt-${i}" style="height: ${state.hideButtons ? '52px' : '70px'};">
+          <div id="chrono${i}">
+            <div class="chr-tot">
+              <h3 id="titre${i}">${i}</h3>
+              <div style="${state.showGap ? '' : 'display: none'}" id="ecart${i}" class="chr-ecart"></div>
+              <div id="start-time${i}" class="chr-start-time" style="font-size:10px;color:#888;height:10px;line-height:10px;margin:1px 0 -4px 0;text-align:center;"></div>
+              <div>
+                <div class="grd h_1">0</div>
+                <div class="grd h_0">0</div>
+                <div>:</div>
+                <div class="grd m_1">0</div>
+                <div class="grd m_0">0</div>
+                <div>:</div>
+                <div class="grd s_1">0</div>
+                <div class="grd s_0">0</div>
+                <div>.</div>
+                <div class="pti c_2">0</div>
+              </div>
+            </div>
+          </div>
+          <div class="cdr" id="cdr${i}" style="${state.hideButtons ? 'display: none;' : ''}">
+            <input type="button" value="${t('btn_start_ind')}" class="bt-start" id="bt-start${i}">
+          </div>
+        </div>`;
+    }
+    container.innerHTML = html;
+
+    for (var j = 1; j <= state.count; j++) {
+      attachTimerEvents(j);
+    }
+  }
+
+  function attachTimerEvents(id) {
+    var chrono = document.getElementById("chrono" + id);
+    if (chrono) {
+      chrono.onclick = function() {
+        if (state.status[id] === 0) startTimer(id);
+        else if (state.status[id] === 1) stopTimer(id);
+        else if (state.status[id] === 2) resumeTimer(id);
+      };
+    }
+    updateTimerControlButtons(id);
+  }
+
+  function updateTimerControlButtons(id) {
+    var cdr = document.getElementById("cdr" + id);
+    var parent = document.getElementById("chr-mlt-" + id);
+    if (!cdr) return;
+
+    if (state.status[id] === 0) {
+      cdr.innerHTML = `<input type="button" value="${t('btn_start_ind')}" class="bt-start" id="bt-start${id}">`;
+      if (parent) { parent.classList.remove("chr-tot-0"); parent.classList.remove("chr-tot-1"); }
+      var btn = document.getElementById("bt-start" + id);
+      if (btn) btn.onclick = function(e) { e.stopPropagation(); startTimer(id); };
+    } else if (state.status[id] === 1) {
+      cdr.innerHTML = `<input type="button" value="${t('btn_stop_ind')}" class="bt-stop" id="bt-stop${id}">`;
+      if (parent) { parent.classList.remove("chr-tot-0"); parent.classList.add("chr-tot-1"); }
+      var btnStop = document.getElementById("bt-stop" + id);
+      if (btnStop) btnStop.onclick = function(e) { e.stopPropagation(); stopTimer(id); };
+    } else if (state.status[id] === 2) {
+      cdr.innerHTML = `
+        <input type="button" value="${t('btn_resume_ind')}" class="bt-reprise" id="bt-reprise${id}">
+        <input type="button" value="${t('btn_reset_ind')}" class="bt-reset" id="bt-reset${id}">`;
+      if (parent) { parent.classList.add("chr-tot-0"); parent.classList.remove("chr-tot-1"); }
+      var btnRep = document.getElementById("bt-reprise" + id);
+      if (btnRep) btnRep.onclick = function(e) { e.stopPropagation(); resumeTimer(id); };
+      var btnRst = document.getElementById("bt-reset" + id);
+      if (btnRst) btnRst.onclick = function(e) { e.stopPropagation(); resetTimer(id); };
+    }
+  }
+
+  function buildLabelInputs() {
+    var container = document.querySelector(".lst-mem");
+    var html = "";
+    for (var i = 1; i <= state.count; i++) {
+      var saved = localStorage.getItem("mlt-i" + i) || "";
+      html += `<input name="texte" type="text" value="${saved}" id="i${i}" placeholder="[${i}] : ${t('placeholder_name')}" size="30" maxlength="30" class="f-txt">`;
+      var titleEl = document.getElementById("titre" + i);
+      if (titleEl) titleEl.innerText = saved !== "" ? saved : i;
+    }
+    container.innerHTML = html;
+
+    var inputs = container.querySelectorAll("input.f-txt");
+    inputs.forEach(function(input) {
+      input.onkeyup = function() {
+        var id = this.id.replace("i", "");
+        var val = this.value;
+        var title = document.getElementById("titre" + id);
+        if (title) title.innerText = val !== "" ? val : id;
+        localStorage.setItem("mlt-i" + id, val);
+        populateTimerDropdown();
+      };
+    });
+  }
+
+  function restoreTimerStates() {
+    var now = Date.now();
+    for (var i = 1; i <= state.count; i++) {
+      state.status[i] = parseInt(localStorage.getItem("mlt-ac" + i)) || 0;
+      state.startTime[i] = parseInt(localStorage.getItem("mlt-dt" + i)) || 0;
+      var last = parseInt(localStorage.getItem("mlt-lc" + i)) || now;
+      state.lastTick[i] = last;
+
+      if (state.status[i] === 1) {
+        state.elapsed[i] = now - state.startTime[i];
+      } else if (state.status[i] === 2) {
+        state.elapsed[i] = last - state.startTime[i];
+      } else {
+        state.elapsed[i] = 0;
+      }
+
+      if (state.startTime[i] > 0) {
+        var startBox = document.getElementById("start-time" + i);
+        if (startBox) startBox.innerText = new Date(state.startTime[i]).toLocaleTimeString();
+      }
+      renderTimerDigits(i);
+      updateTimerControlButtons(i);
+    }
+  }
+
+  function startTimer(id) {
+    if (state.oneByOne) {
+      for (var k = 1; k <= state.count; k++) {
+        if (k !== id && state.status[k] === 1) stopTimer(k);
+      }
+    }
+
+    var startMs = Date.now();
+    if (window.__timerStartMode === 'custom' && window.__customStartTimestamp !== null) {
+      startMs = window.__customStartTimestamp;
+    }
+
+    state.status[id] = 1;
+    state.startTime[id] = startMs;
+    state.lastTick[id] = Date.now();
+    state.elapsed[id] = Date.now() - startMs;
+
+    localStorage.setItem("mlt-ac" + id, 1);
+    localStorage.setItem("mlt-dt" + id, startMs);
+    localStorage.setItem("mlt-lc" + id, Date.now());
+
+    var startBox = document.getElementById("start-time" + id);
+    if (startBox) startBox.innerText = new Date(startMs).toLocaleTimeString();
+
+    updateTimerControlButtons(id);
+    updateMainButtons();
+  }
+
+  function stopTimer(id) {
+    var now = Date.now();
+    state.status[id] = 2;
+    state.elapsed[id] = now - state.startTime[id];
+    state.lastTick[id] = now;
+
+    localStorage.setItem("mlt-ac" + id, 2);
+    localStorage.setItem("mlt-lc" + id, now);
+
+    updateTimerControlButtons(id);
+    updateMainButtons();
+  }
+
+  function resumeTimer(id) {
+    if (state.oneByOne) {
+      for (var k = 1; k <= state.count; k++) {
+        if (k !== id && state.status[k] === 1) stopTimer(k);
+      }
+    }
+    var now = Date.now();
+    state.status[id] = 1;
+    state.startTime[id] = now - state.elapsed[id];
+    state.lastTick[id] = now;
+
+    localStorage.setItem("mlt-ac" + id, 1);
+    localStorage.setItem("mlt-dt" + id, state.startTime[id]);
+    localStorage.setItem("mlt-lc" + id, now);
+
+    updateTimerControlButtons(id);
+    updateMainButtons();
+  }
+
+  function resetTimer(id) {
+    state.status[id] = 0;
+    state.startTime[id] = 0;
+    state.elapsed[id] = 0;
+    state.lastTick[id] = 0;
+
+    localStorage.removeItem("mlt-ac" + id);
+    localStorage.removeItem("mlt-dt" + id);
+    localStorage.removeItem("mlt-lc" + id);
+
+    var startBox = document.getElementById("start-time" + id);
+    if (startBox) startBox.innerText = "";
+    var ecartBox = document.getElementById("ecart" + id);
+    if (ecartBox) ecartBox.innerText = "";
+
+    renderTimerDigits(id);
+    updateTimerControlButtons(id);
+    updateMainButtons();
+  }
+
+  function startTicking() {
+    if (state.timerLoop) clearInterval(state.timerLoop);
+    state.timerLoop = setInterval(function() {
+      var now = Date.now();
+      var maxElapsed = 0;
+
+      for (var i = 1; i <= state.count; i++) {
+        if (state.status[i] === 1) {
+          state.elapsed[i] = now - state.startTime[i];
+          state.lastTick[i] = now;
+          localStorage.setItem("mlt-lc" + i, now);
+          renderTimerDigits(i);
+        }
+        if (state.elapsed[i] > maxElapsed) maxElapsed = state.elapsed[i];
+      }
+
+      if (state.showGap) {
+        for (var j = 1; j <= state.count; j++) {
+          var ecartEl = document.getElementById("ecart" + j);
+          if (!ecartEl) continue;
+          if (state.elapsed[j] > 0 && maxElapsed > 0) {
+            var diff = Math.floor((maxElapsed - state.elapsed[j]) / 1000);
+            var sec = diff % 60;
+            var min = Math.floor(diff / 60) % 60;
+            var hr = Math.floor(diff / 3600);
+            var str = (hr > 0 ? hr + ":" : "") + (min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec);
+            ecartEl.innerText = diff > 0 ? "-" + str : "00:00";
+          } else {
+            ecartEl.innerText = "";
+          }
+        }
+      }
+    }, state.tenthActive ? 50 : 250);
+  }
+
+  function renderTimerDigits(id) {
+    var dec = decomposeTime(Math.max(0, state.elapsed[id] || 0));
+    var el = document.getElementById("chrono" + id);
+    if (!el) return;
+
+    var classes = [".h_1", ".h_0", ".m_1", ".m_0", ".s_1", ".s_0", ".c_2"];
+    var isRunning = state.status[id] === 1;
+
+    for (var c = 0; c <= 6; c++) {
+      var node = el.querySelector(classes[c]);
+      if (node) {
+        node.innerText = (c === 6 && !state.tenthActive) ? "0" : dec[c];
+        node.style.color = isRunning ? "#000" : "#999";
+      }
+    }
+  }
+
+  function updateMainButtons() {
+    var hasRunning = state.status.some(function(s) { return s === 1; });
+    var hasPaused = state.status.some(function(s) { return s === 2; });
+    var hasStopped = state.status.some(function(s) { return s === 0; });
+
+    var btnStart = document.getElementById("bt-start-all");
+    var btnStop = document.getElementById("bt-stop-all");
+    var btnReprise = document.getElementById("bt-reprise-all");
+
+    if (hasRunning) btnStop.classList.remove("bt-hide");
+    else btnStop.classList.add("bt-hide");
+
+    if (hasPaused && !hasRunning) btnReprise.classList.remove("bt-hide");
+    else btnReprise.classList.add("bt-hide");
+
+    if (hasStopped) btnStart.classList.remove("bt-hide");
+    else btnStart.classList.add("bt-hide");
+  }
+
+  // Header Options Bar
+  document.getElementById("aff-dix").onclick = function(e) {
+    e.preventDefault();
+    state.tenthActive = state.tenthActive ? 0 : 1;
+    localStorage.setItem("aff-dixieme", state.tenthActive);
+    applyOptionClasses();
+    startTicking();
+  };
+
+  document.getElementById("un-par-un").onclick = function(e) {
+    e.preventDefault();
+    state.oneByOne = state.oneByOne ? 0 : 1;
+    localStorage.setItem("un-par-un", state.oneByOne);
+    applyOptionClasses();
+  };
+
+  document.getElementById("masquer").onclick = function(e) {
+    e.preventDefault();
+    state.hideButtons = state.hideButtons ? 0 : 1;
+    localStorage.setItem("c4-masquer", state.hideButtons);
+    applyOptionClasses();
+    var cdrs = document.querySelectorAll(".cdr");
+    var mlts = document.querySelectorAll(".chr-mlt");
+    cdrs.forEach(function(c) { c.style.display = state.hideButtons ? "none" : "block"; });
+    mlts.forEach(function(m) { m.style.height = state.hideButtons ? "52px" : "70px"; });
+  };
+
+  document.getElementById("ecart").onclick = function(e) {
+    e.preventDefault();
+    state.showGap = state.showGap ? 0 : 1;
+    localStorage.setItem("c4-ecart", state.showGap);
+    applyOptionClasses();
+    var ecarts = document.querySelectorAll(".chr-ecart");
+    ecarts.forEach(function(ec) { ec.style.display = state.showGap ? "inline-block" : "none"; });
+  };
+
+  document.getElementById("nombre").onchange = function() {
+    var val = parseInt(this.value);
+    if (!isNaN(val) && val >= 2 && val <= 1000) {
+      state.count = val;
+      localStorage.setItem("mlt-nbr", val);
+      buildTimers();
+      buildLabelInputs();
+      restoreTimerStates();
+      populateTimerDropdown();
+    }
+  };
+
+  // Mass Controls
+  document.getElementById("bt-start-all").onclick = function() {
+    for (var i = 1; i <= state.count; i++) {
+      if (state.status[i] !== 1) startTimer(i);
+    }
+  };
+
+  document.getElementById("bt-stop-all").onclick = function() {
+    for (var i = 1; i <= state.count; i++) {
+      if (state.status[i] === 1) stopTimer(i);
+    }
+  };
+
+  document.getElementById("bt-reprise-all").onclick = function() {
+    for (var i = 1; i <= state.count; i++) {
+      if (state.status[i] === 2) resumeTimer(i);
+    }
+  };
+
+  document.getElementById("bt-reset-all").onclick = function() {
+    for (var i = 1; i <= state.count; i++) {
+      resetTimer(i);
+    }
+  };
+
+  document.getElementById("bt-clr-nom").onclick = function() {
+    for (var i = 1; i <= state.count; i++) {
+      localStorage.removeItem("mlt-i" + i);
+      var inp = document.getElementById("i" + i);
+      if (inp) inp.value = "";
+      var title = document.getElementById("titre" + i);
+      if (title) title.innerText = i;
+    }
+    populateTimerDropdown();
+  };
+
+  document.getElementById("bt-export").onclick = function() {
+    var tsv = "";
+    for (var i = 1; i <= state.count; i++) {
+      var nameInp = document.getElementById("i" + i);
+      var label = nameInp ? nameInp.value : "";
+      tsv += i + "\t" + formatTimeText(decomposeTime(state.elapsed[i] || 0)) + "\t" + label + "\n";
+    }
+    var exportArea = document.querySelector(".export-memoire");
+    exportArea.innerHTML = `<textarea id="ta-export" rows="8">${tsv}</textarea>`;
+
+    var csvContent = tsv.replace(/\t/g, ",");
+    var date = new Date().toISOString().slice(0, 10);
+    var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "online-timers-" + date + ".csv";
+    link.click();
+  };
+
+  // --- Timestamp Panel & Direct Control ---
+  var modeRadioSys = document.querySelector('input[name="start_mode_radio"][value="system"]');
+  var modeRadioCust = document.querySelector('input[name="start_mode_radio"][value="custom"]');
+  var cardSys = document.getElementById("card-mode-system");
+  var cardCust = document.getElementById("card-mode-custom");
+  var customPanel = document.getElementById("tso-custom-panel");
+  var dtInput = document.getElementById("tso-datetime-input");
+  var previewBox = document.getElementById("tso-preview-text");
+  var badge = document.getElementById("tso-active-badge");
+  var timerDropdown = document.getElementById("tso-timer-dropdown");
+  var btnStartSelected = document.getElementById("tso-btn-start-selected");
+  var toast = document.getElementById("tso-toast");
+
+  function toLocalISO(d) {
+    var pad = function(n) { return (n < 10 ? "0" : "") + n; };
+    return d.getFullYear() + "-" +
+      pad(d.getMonth() + 1) + "-" +
+      pad(d.getDate()) + "T" +
+      pad(d.getHours()) + ":" +
+      pad(d.getMinutes()) + ":" +
+      pad(d.getSeconds());
+  }
+
+  function getSelectedTimestampMs() {
+    if (!dtInput.value) return Date.now();
+    var parsed = new Date(dtInput.value).getTime();
+    return isNaN(parsed) ? Date.now() : parsed;
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.style.display = "block";
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(function() { toast.style.display = "none"; }, 3500);
+  }
+
+  function setMode(mode) {
+    window.__timerStartMode = mode;
+    localStorage.setItem("mlt_start_mode", mode);
+
+    if (mode === "custom") {
+      modeRadioCust.checked = true;
+      cardCust.classList.add("active");
+      cardSys.classList.remove("active");
+      customPanel.style.display = "block";
+      badge.className = "tso-badge tso-badge-cust";
+      badge.textContent = t("tso_badge_cust");
+      if (!dtInput.value) dtInput.value = toLocalISO(new Date());
+      updatePreview();
+    } else {
+      modeRadioSys.checked = true;
+      cardSys.classList.add("active");
+      cardCust.classList.remove("active");
+      customPanel.style.display = "none";
+      badge.className = "tso-badge tso-badge-sys";
+      badge.textContent = t("tso_badge_sys");
+    }
+  }
+
+  function updatePreview() {
+    var startMs = getSelectedTimestampMs();
+    var nowMs = Date.now();
+    var diffMs = nowMs - startMs;
+    var d = new Date(startMs);
+    var pad = function(n) { return (n < 10 ? "0" : "") + n; };
+    var timeFormatted = d.toLocaleDateString() + " " + d.toLocaleTimeString();
+
+    if (diffMs >= 0) {
+      var totalSec = Math.floor(diffMs / 1000);
+      var sec = totalSec % 60;
+      var min = Math.floor(totalSec / 60) % 60;
+      var hr = Math.floor(totalSec / 3600);
+      previewBox.innerHTML = t("tso_preview_sel") + ': <strong style="color:#38bdf8;">' + timeFormatted + '</strong> &nbsp;|&nbsp; ' + t("tso_preview_elapsed") + ': <strong style="color:#fbbf24;">' + pad(hr) + ':' + pad(min) + ':' + pad(sec) + '</strong>';
+    } else {
+      previewBox.innerHTML = t("tso_preview_sel") + ': <strong style="color:#38bdf8;">' + timeFormatted + '</strong> &nbsp;|&nbsp; <span style="color:#f87171;">' + t("tso_preview_future") + '</span>';
+    }
+  }
+
+  function populateTimerDropdown() {
+    var html = "";
+    for (var i = 1; i <= state.count; i++) {
+      var nameInput = document.getElementById("i" + i);
+      var label = (nameInput && nameInput.value) ? (t("timer_prefix") + " " + i + " (" + nameInput.value + ")") : (t("timer_prefix") + " " + i);
+      html += `<option value="${i}">${label}</option>`;
+    }
+    var prev = timerDropdown.value;
+    timerDropdown.innerHTML = html;
+    if (prev && parseInt(prev) <= state.count) timerDropdown.value = prev;
+  }
+
+  // Intercept Individual Starts to respect Custom/System mode
+  document.addEventListener("click", function(e) {
+    var startBtn = e.target.closest && (e.target.closest(".bt-start") || e.target.closest('[id^="bt-start"]'));
+    var chronoBox = e.target.closest && e.target.closest('[id^="chrono"]');
+    var timerId = null;
+
+    if (startBtn && startBtn.id && startBtn.id !== "bt-start-all" && !startBtn.id.startsWith("tso-")) {
+      timerId = startBtn.id.replace("bt-start", "");
+    } else if (chronoBox && chronoBox.id && !chronoBox.id.startsWith("tso-")) {
+      var cId = chronoBox.id.replace("chrono", "");
+      if (state.status[cId] === 0) timerId = cId;
+    }
+
+    if (timerId) {
+      if (window.__timerStartMode === "custom") {
+        window.__customStartTimestamp = getSelectedTimestampMs();
+        showToast(t("timer_prefix") + " " + timerId + " " + t("toast_cust_start") + ": " + new Date(window.__customStartTimestamp).toLocaleTimeString());
+      } else {
+        window.__customStartTimestamp = null;
+        showToast(t("timer_prefix") + " " + timerId + " " + t("toast_sys_start"));
+      }
+    }
+  }, true);
+
+  btnStartSelected.onclick = function() {
+    var id = parseInt(timerDropdown.value);
+    if (!id) return;
+    if (state.status[id] === 2) resetTimer(id);
+
+    if (window.__timerStartMode === "custom") {
+      window.__customStartTimestamp = getSelectedTimestampMs();
+      showToast(t("timer_prefix") + " " + id + " " + t("toast_cust_start") + ": " + new Date(window.__customStartTimestamp).toLocaleTimeString());
+    }
+    startTimer(id);
+  };
+
+  cardSys.onclick = function() { setMode("system"); };
+  cardCust.onclick = function() { setMode("custom"); };
+  modeRadioSys.onchange = function() { setMode("system"); };
+  modeRadioCust.onchange = function() { setMode("custom"); };
+
+  document.getElementById("tso-btn-now").onclick = function() {
+    dtInput.value = toLocalISO(new Date());
+    updatePreview();
+  };
+
+  dtInput.oninput = updatePreview;
+  dtInput.onchange = updatePreview;
+
+  document.querySelectorAll(".tso-custom-controls [data-offset]").forEach(function(btn) {
+    btn.onclick = function() {
+      var offsetSec = parseInt(this.getAttribute("data-offset"));
+      var targetMs = getSelectedTimestampMs() + (offsetSec * 1000);
+      dtInput.value = toLocalISO(new Date(targetMs));
+      updatePreview();
+    };
+  });
+
+  // Language dropdown event binding
+  var langSelect = document.getElementById("lang-select");
+  if (langSelect) {
+    langSelect.onchange = function() {
+      setLanguage(this.value);
+    };
+  }
+
+  // Initialization
+  dtInput.value = toLocalISO(new Date());
+  initApp();
+  populateTimerDropdown();
+  setInterval(updatePreview, 1000);
+})();
+</script>
+</body>
+</html>
