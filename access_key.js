@@ -1,1 +1,0 @@
-window.accessGranted = true;
